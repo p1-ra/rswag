@@ -87,6 +87,16 @@ module Rswag
             "#{name}=#{value.join('|')}"
           when :multi
             value.map { |v| "#{name}=#{v}" }.join('&')
+          when :hash
+            query_params = []
+            value.each_with_index do |o,i|
+             param = {}
+             param[name] = o
+             query_param = URI.decode(param.to_query)
+             query_param = URI.encode(query_param.gsub(name.to_s, "#{name}[#{i}]"))
+             query_params << query_param
+            end
+            query_params.join('&')
           else
             "#{name}=#{value.join(',')}" # csv is default
           end
